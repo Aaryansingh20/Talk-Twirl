@@ -52,7 +52,6 @@ export async function POST(req: Request) {
   }
 
   // Get the ID and type
-  const { id } = evt.data;
   const eventType = evt.type;
 
 
@@ -75,10 +74,10 @@ export async function POST(req: Request) {
           status: 200,
           message: "User info inserted",
         });
-      } catch (error: any) {
+      } catch (error) {
         return NextResponse.json({
           status: 400,
-          message: error.message,
+          error,
         });
       }
 
@@ -89,10 +88,10 @@ export async function POST(req: Request) {
           status: 200,
           message: "User info updated",
         });
-      } catch (error: any) {
+      } catch (error) {
         return NextResponse.json({
           status: 400,
-          message: error.message,
+          error,
         });
       }
 

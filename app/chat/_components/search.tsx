@@ -27,17 +27,18 @@ export default function SearchComponent({ onSidebar }: { onSidebar: boolean }) {
 
   const createConversation = useMutation(api.chats.createOrGetConversation)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
     // Debounce function that delays executing the search
     debounce((term: string) => {
       // startTransition allows React to prioritize urgent updates
       startTransition(() => {
         // Update the search term after a delay
-        setDebouncedTerm(term)
-      })
+        setDebouncedTerm(term);
+      });
     }, 300),
     [],
-  )
+  );
 
   const searchResults = useQuery(api.users.searchUsers, {
     searchTerm: debouncedTerm,

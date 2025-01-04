@@ -6,6 +6,7 @@ import { Id } from "@/convex/_generated/dataModel"
 import { fetchMutation } from "convex/nextjs"
 import { useMutation } from "convex/react"
 import { Mic, Paperclip, Send, X } from "lucide-react"
+import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -55,36 +56,36 @@ export default function FormChat({ conversationId, userId }: {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+  
       if (SpeechRecognition) {
         setSpeecSupported(true)
-
+  
         recognitionRef.current = new SpeechRecognition()
         const recognition = recognitionRef.current
-
+  
         recognition.continuous = true
         recognition.interimResults = true
         recognition.lang = "en-US"
-
+  
         recognition.onstart = () => {
           setIsListening(true)
           toast.success("Started Listening")
         }
-
+  
         recognition.onresult = (event) => {
           const current = event.resultIndex;
           const transcript = event.results[current][0].transcript
           const currentMessage = watch("message") || ""
-
+  
           if (event.results[current].isFinal) {
             setValue('message', currentMessage + transcript + " ")
           }
         }
-
+  
         recognition.onerror = (event) => {
           console.log('Speech recognition error: ', event.error)
           setIsListening(false)
-
+  
           switch (event.error) {
             case 'not-allowed':
               toast.error("Microphone access denied. Please enable microphone permissions.");
@@ -99,22 +100,22 @@ export default function FormChat({ conversationId, userId }: {
             default:
               toast.error("Speech recognition error. Please try again.");
           }
-
+  
         }
-
+  
         recognition.onend = () => {
           setIsListening(false);
           toast.info("Stopped listening");
         };
-
+  
         // Check initial microphone permission
         checkMicrophonePermission();
-
+  
       }
     }
-
-  }, [])
-
+  
+  }, [setValue, watch]); // Add setValue and watch to the dependency array
+  
 
   const toggleListening = async () => {
     if (!recognitionRef.current) return
@@ -233,7 +234,7 @@ export default function FormChat({ conversationId, userId }: {
         <div className="p-2 flex gap-2 flex-wrap border-b border-black">
           {attachments.map((url, index) => (
             <div key={index} className="relative group">
-              <img
+              <Image
                 src={url}
                 alt="attachment"
                 className="h-20 w-20 object-cover rounded-md"
